@@ -20,6 +20,8 @@ import { postRequest } from '../GlobalFunctions/request';
 import { getAllCommentsByPostIdQuery, getChildCommentsByCommentId, voteThreadQuery } from '../GlobalFunctions/queries';
 import CommentModal from './CommentModal';
 import { convertDeltaMilisToTime } from '../GlobalFunctions/date';
+import { getUserVotedByThread } from '../GlobalFunctions/queries';
+import { socket } from '../GlobalFunctions/socket';
 
 const styles = StyleSheet.create({
     header: {
@@ -152,9 +154,14 @@ const ThreadModal = (props) => {
     const[treeComments, setTreeComments] = useState([]);
     const [comments, setComments] = useState([]);
     const[hiddenComments, setHiddeComments] = useState([]);
+    const [voteSelected, setVoteSelected] = useState(0);
 
     useEffect(() => {
         getCommentsByPostId();
+        getVoteStatus();
+        socket.on('getVotePost', (vote) => {
+            setVoteSelected(vote.value);
+        });
     }, []);
 
     const getCommentsByPostId = () => {
@@ -235,16 +242,30 @@ const ThreadModal = (props) => {
 
     const voteThread = (value) => {
         const token = firebase.auth().currentUser.uid;
-        var request = postRequest(
-            voteThreadQuery(token, props.selectedThread._id, value),
-            "/graphql"
-        );
-        fetch(request).then((response) => {
-            response.json().then((data) => {
-                console.log(data);
-            })
+        socket.emit('votePost', {
+          voter: token,
+          thread: props.selectedThread._id,
+          value,
         })
     }
+
+    const getVoteStatus = () => {
+        const token = firebase.auth().currentUser.uid;
+        var request = postRequest(
+            getUserVotedByThread(token, props.selectedThread._id),
+            "/graphql"
+            );
+            fetch(request).then((response) => {
+                response.json().then((data) => {
+                    if(data.data.getUserVotedByThread){
+                        setVoteSelected(data.data.getUserVotedByThread.value);
+                    }
+                })
+            }
+        )
+    }
+
+    console.log(props.selectedThread.voteValue);
 
     return (
         <Modal
@@ -264,11 +285,11 @@ const ThreadModal = (props) => {
                     <View style = {styles.thread}>
                         <View style = {styles.voteContainer}>
                             <TouchableOpacity onPress = {() => voteThread(1)}>
-                                <FeatherIcon name="chevron-up" size={35} color = {"lightgray"} />
+                                <FeatherIcon name="chevron-up" size={35} color = {voteSelected >=1 ? "black" : "lightgray"} />
                             </TouchableOpacity>
-                            <Text style={{fontSize: 15, fontWeight: "600"}}>{props.selectedThread.voteValue}</Text>
+                            <Text style={{fontSize: 15, fontWeight: "600"}}>{props.selectedThread.voteValue + voteSelected}</Text>
                             <TouchableOpacity onPress = {() => voteThread(-1)}>
-                                <FeatherIcon name="chevron-down" size={35} color = {"lightgray"} />
+                                <FeatherIcon name="chevron-down" size={35} color = {voteSelected <= -1 ? "black" : "lightgray"} />
                             </TouchableOpacity>
                         </View>
                         <View style = {styles.threadContainer}>
@@ -279,7 +300,7 @@ const ThreadModal = (props) => {
                                     <MaterialCommunityIcons name = "comment" size = {15} color = "gray"/>
                                     <Text style ={styles.footerLeft}>&nbsp;Comments</Text>
                                 </TouchableOpacity>
-                                <Text style = {styles.footerRight}>🐻 {convertDeltaMilisToTime(Number(props.selectedThread.date))} ago</Text>
+                                <Text style = {styles.footerRight}>{props.selectedThread.creator.emoji} {convertDeltaMilisToTime(props.selectedThread.date)} ago</Text>
                             </View>
                         </View>
                     </View>

@@ -36,38 +36,38 @@ const styles = StyleSheet.create({
 
 const EmojiSelector = (props) => {
     const [displayFullEmojiModal, setDisplayFullEmojiModal] = useState(false); 
-  return (
-    <View style = {styles.emojiSelector}>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("😀")}>
-            <Text style = {styles.emoji}>😀</Text>
-        </TouchableOpacity >
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("😄")}>
-            <Text style = {styles.emoji}>😄</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("😣")}>
-            <Text style = {styles.emoji}>😣</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("😚")}>
-            <Text style = {styles.emoji}>😚</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("😝")}>
-            <Text style = {styles.emoji}>😝</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("🥳")}>
-            <Text style = {styles.emoji}>🥳</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => props.setCurrentEmoji("🤝")}>
-            <Text style = {styles.emoji}>🤝</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style = {{backgroundColor: "#f5f5f5", width: 35, height: 35, borderRadius: 50, justifyContent: "center", alignItems: "center", marginRight: 5,}}
-            onPress = {() => setDisplayFullEmojiModal(true)}>
-            <FeatherIcon name = "plus" size = {25} color = "gray"/>
-        </TouchableOpacity>
-        <EmojiSelectorModal
-            displayModal = {displayFullEmojiModal}
-            setModal = {setDisplayFullEmojiModal}/>
-    </View>
-  );
+    return (
+        <View style = {styles.emojiSelector}>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("😀")}>
+                <Text style = {styles.emoji}>😀</Text>
+            </TouchableOpacity >
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("😄")}>
+                <Text style = {styles.emoji}>😄</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("😣")}>
+                <Text style = {styles.emoji}>😣</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("😚")}>
+                <Text style = {styles.emoji}>😚</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("😝")}>
+                <Text style = {styles.emoji}>😝</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("🥳")}>
+                <Text style = {styles.emoji}>🥳</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress = {() => props.setCurrentEmoji("🤝")}>
+                <Text style = {styles.emoji}>🤝</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {{backgroundColor: "#f5f5f5", width: 35, height: 35, borderRadius: 50, justifyContent: "center", alignItems: "center", marginRight: 5,}}
+                onPress = {() => setDisplayFullEmojiModal(true)}>
+                <FeatherIcon name = "plus" size = {25} color = "gray"/>
+            </TouchableOpacity>
+            <EmojiSelectorModal
+                displayModal = {displayFullEmojiModal}
+                setModal = {setDisplayFullEmojiModal}/>
+        </View>
+    );
 }
 
 export default EmojiSelector;

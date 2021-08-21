@@ -25,6 +25,7 @@ export function getAllPostsQuery(){
                 longitude
                 emoji
                 date
+                voteValue
                 isNightmode
             }
         }`
@@ -218,6 +219,19 @@ export function getAllMessagesByRoom(senderToken, receiverToken){
               message
               room
               date
+            }
+        }`
+    }
+}
+
+export function getUserVotedByThread(token, postId){
+    return{
+        query:
+        `query{
+            getUserVotedByThread(token: "${token}", postId: "${postId}"){
+                _id
+                value
+                date
             }
         }`
     }

@@ -1,5 +1,5 @@
 export function postRequest(data, url){
-    var host = 'http://192.168.1.73:8080'
+    var host = 'http://192.168.1.8:8080'
     var request = new Request(`${host}${url}`, {
         method: 'POST',
         headers: new Headers({ 'Content-Type' : 'application/json', 'Accept': 'application/json' }),

@@ -20,6 +20,7 @@ type Post{
     latitude: Float!
     longitude: Float!
     emoji: String!
+    voteValue: Float!
     date: String
     isNightmode: Boolean
 }
@@ -60,6 +61,7 @@ type RootQuery{
     getChildCommentsByCommentId(commentId: String!): [Comment]!
     getAllRecentComments: [Comment]!
     getAllMessagesByRoom(senderToken: String!, receiverToken: String!): [Message]
+    getUserVotedByThread(token: String!, postId: String!): Vote
 }
 
 type RootMutation{

@@ -14,7 +14,7 @@ module.exports = {
             if(!voterUser){
                 throw new Error('User not found in database');
             }
-            let alreadyVote = await Vote.aggregate([{$match: {post: ObjectId(thread), voter: voterUser}}]);
+            let alreadyVote = await Vote.aggregate([{$match: {post: ObjectId(thread), voter: ObjectId(voterUser._id)}}]);
             let result;
             if(alreadyVote.length > 0){
                 const vote = await Vote.findById(alreadyVote[0]._id);
@@ -26,6 +26,8 @@ module.exports = {
                     vote.value = -1
                 }
                 else{
+                    post.voteValue = post.voteValue + value;
+                    await post.save();
                     posterUser.points = await posterUser.points + value;
                     await posterUser.save();
                 }
@@ -54,5 +56,11 @@ module.exports = {
         } catch(err){
             throw(err);
         }
+    },
+
+    getUserVotedByThread: async({token, postId}) => {
+        const voterUser = await User.findOne({token});
+        const vote = await Vote.aggregate([{$match: {post: ObjectId(postId), voter: ObjectId(voterUser._id)}}]);
+        return vote[0];
     }
 }

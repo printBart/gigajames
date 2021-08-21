@@ -67,6 +67,7 @@ const CommentModal = (props) => {
   const postComment = () => {
     const commentId = props.displayComment._id !== props.post._id ? props.displayComment._id : null;
     const token = firebase.auth().currentUser.uid;
+
     var request = postRequest(
       createCommentQuery(comment, token, props.currentLocation.coords.latitude, props.currentLocation.coords.longitude, props.post._id, commentId),
         "/graphql"

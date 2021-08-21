@@ -281,6 +281,7 @@ const MapView = ({navigation}) => {
         emitThread = {emitThread}/>
       {displayAllThreads &&
         <ThreadView
+          currentLocation = {currentLocation}
           displayAllThreads = {displayAllThreads}
           setDisplayAllThreads = {setDisplayAllThreads}
           toggleCreateThread = {toggleCreateThreadFromList}/>}

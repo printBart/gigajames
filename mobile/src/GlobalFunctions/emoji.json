@@ -70,5 +70,33 @@
     {
         "emoji": "😗",
         "name": "kissing-face"
+    },
+    {
+        "emoji": "☺️",
+        "name": "smiling-face"
+    },
+    {
+        "emoji": "😚",
+        "name": "kissing-face-with-closed-eyes"
+    },
+    {
+        "emoji": "😙",
+        "name": "kissing-face-with-smiling-eyes"
+    },
+    {
+        "emoji": "🥲",
+        "name": "smiling-face-with-tear"
+    },                                                                                                                                                                                                                                                                                                                                                                    
+    {
+        "emoji": "😋",
+        "name": "face-savoring-food"
+    },
+    {
+        "emoji": "😛",
+        "name": "face-with-tongue"
+    },
+    {
+        "emoji": "😜",
+        "name": "winking-face-with-tongue"
     }
 ]

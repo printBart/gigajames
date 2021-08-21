@@ -1,5 +1,4 @@
 //graphql database functions
-const graphqlSchema = require('./graphql/schema/index');
 const graphqlResolver = require('./graphql/resolver/index');
 var onlineUsers = [];
 
@@ -63,6 +62,12 @@ function socketioConnection(server) {
                 });
             };
         });
+
+        socket.on("votePost", ({voter, thread, value}) => {
+            graphqlResolver.voteThread({voter, thread, value}).then((vote) => {
+                io.emit("getVotePost", vote);
+            })
+        })
 
         socket.on('disconnect', () => {
             console.log("disconnected user");

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,9 +8,13 @@ import {
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as firebase from 'firebase';
+import { socket } from '../../../GlobalFunctions/socket';
 
 //functions
 import { convertDeltaMilisToTime } from '../../../GlobalFunctions/date';
+import { postRequest } from '../../../GlobalFunctions/request';
+import { getUserVotedByThread } from '../../../GlobalFunctions/queries';
 
 
 const styles = StyleSheet.create({
@@ -65,15 +69,49 @@ const styles = StyleSheet.create({
 
 
 const ThreadPreview = (props) => {
+    const [voteSelected, setVoteSelected] = useState(0);
+
+    useEffect(() => {
+        getVoteStatus();
+        socket.on('getVotePost', (vote) => {
+            setVoteSelected(vote.value);
+        });
+    }, []);
+
+    const votePost = (value) => {
+        const token = firebase.auth().currentUser.uid;
+        socket.emit('votePost', {
+          voter: token,
+          thread: props.post._id,
+          value,
+        })
+    }
+
+    const getVoteStatus = () => {
+        const token = firebase.auth().currentUser.uid;
+        var request = postRequest(
+            getUserVotedByThread(token, props.post._id),
+            "/graphql"
+            );
+            fetch(request).then((response) => {
+                response.json().then((data) => {
+                    if(data.data.getUserVotedByThread){
+                        setVoteSelected(data.data.getUserVotedByThread.value);
+                    }
+                })
+            }
+        )
+    }
+
     return (
         <TouchableOpacity style = {styles.threadPreview} onPress =  {() => props.setSelectedThread(props.post)}>
             <View style = {styles.voteContainer}>
-                <TouchableOpacity>
-                    <FeatherIcon name="chevron-up" size={35} />
+                <TouchableOpacity onPress = {() => votePost(1)}>
+                    <FeatherIcon name="chevron-up" size={35} color = {voteSelected >=1 ? "black" : "lightgray"}/>
                 </TouchableOpacity>
-                <Text>0</Text>
-                <TouchableOpacity>
-                    <FeatherIcon name="chevron-down" size={35} />
+                <Text>{props.post.voteValue + voteSelected}</Text>
+                <TouchableOpacity onPress = {() => votePost(-1)}>
+                    <FeatherIcon name="chevron-down" size={35} color = {voteSelected <= -1 ? "black" : "lightgray"}/>
                 </TouchableOpacity>
             </View>
             <View style = {styles.threadBodyContainer}>

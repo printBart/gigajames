@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
 const ThreadPreview = (props) => {
     return (
         <TouchableOpacity style = {styles.threadPreview} onPress =  {() => props.setSelectedThread(props.post)}>
-                <Text style = {styles.threadTitle}>{props.post.emoji} {props.post.title}</Text>
-                <Text style = {styles.threadDescription} numberOfLines = {2} ellipsizeMode="tail">{props.post.description}</Text>
-                <View style = {styles.triangle}></View>
+            <Text style = {styles.threadTitle}>{props.post.emoji} {props.post.title}</Text>
+            <Text style = {styles.threadDescription} numberOfLines = {2} ellipsizeMode="tail">{props.post.description}</Text>
+            <View style = {styles.triangle}></View>
         </TouchableOpacity>
     );
 }

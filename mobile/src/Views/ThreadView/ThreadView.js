@@ -8,7 +8,6 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
@@ -54,16 +53,11 @@ const styles = StyleSheet.create({
 });
 
 const ThreadView = (props) => {
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [selectedThread, setSelectedThread] = useState(null);
   const [allPosts, setAllPosts] = useState([]);
 
   useEffect(() => {
     getAllPosts();
-    Geolocation.watchPosition(
-      (position) => {setCurrentLocation(position)},
-      (error) => {console.log(error.code, error.message);},
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter: 50 });
   }, []);
 
   const getAllPosts = () => {
@@ -120,9 +114,10 @@ const ThreadView = (props) => {
       </ScrollView>
       
       {selectedThread &&
-      <ThreadModal
-        selectedThread = {selectedThread}
-        setSelectedThread = {setSelectedThread}/>}
+        <ThreadModal
+          currentLocation = {props.currentLocation}
+          selectedThread = {selectedThread}
+          setSelectedThread = {setSelectedThread}/>}
 
 
     </SafeAreaView>
