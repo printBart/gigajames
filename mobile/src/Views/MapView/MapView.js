@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
 });
 
 const MapView = ({navigation}) => {
+  const [currentUser, updateCurrentUser] = useState();
   const [currentUsers, updateCurrentUsers] = useState([]);
   const [currentUserProfile, updateCurrentUserProfile] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -171,7 +172,12 @@ const MapView = ({navigation}) => {
     // });
 
     socket.on('displayCurrentUsers', (onlineUsers) => {
+      const token = firebase.auth().currentUser.uid;
       updateCurrentUsers(onlineUsers);
+      const myUser = onlineUsers.filter((user) => {
+        return user.token === token
+      });
+      updateCurrentUser(myUser[0]);
     })
     emitThread();
     Geolocation.getCurrentPosition((position) => {
@@ -215,6 +221,9 @@ const MapView = ({navigation}) => {
     setDisplayAllThreads(false);
     setDisplayThread(true);
   }
+
+  console.log("onlineUsers");
+  console.log(currentUsers);
 
   return (
     <View style={styles.page}>
@@ -293,7 +302,7 @@ const MapView = ({navigation}) => {
         setSelectedThread = {setSelectedThread}/>}
       <SafeAreaView  style = {{position: "absolute", top: 50, left: 10}}>
         <TouchableOpacity style ={styles.profileButton} onPress = {() => setProfileVisible(true)}>
-          <Text style ={{fontSize: 30}}>🐶</Text>
+          <Text style ={{fontSize: 30}}>{currentUser && currentUser.emoji}</Text>
         </TouchableOpacity>
       </SafeAreaView>
 

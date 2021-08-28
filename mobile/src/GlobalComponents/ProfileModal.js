@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -10,7 +10,7 @@ import {
 
 
 import * as firebase from 'firebase';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 
 const styles = StyleSheet.create({
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     header: {
         display: "flex",
         flexDirection: "row",
-        height: 55,
     },
     profileButton: {
         backgroundColor: "white", 
@@ -64,17 +63,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         display: "flex",
         flexDirection: "row",
-        shadowColor: "#000",
-        borderRadius: 25,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
-        width: "100%",
+        flex: 1,
     },
     emojiBtn: {
         paddingVertical: 10,
@@ -110,12 +99,28 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: "#f5f5f5",
         paddingLeft: 20,
+    },
+    editBioBtn: {
+        padding: 7.5,
+        borderRadius: 5,
+        flex: 1,
+        marginHorizontal: 2.5,
+
+    },
+    editBioBtnText: {
+        textAlign: "center",
+        fontWeight: "bold",
+        color: "white"
     }
 });
 
 const ProfileModal = (props) => {
-    const [selector, setSelector] = useState(false);
+    const bioInput = useRef();
     const [ghostMode, setGhostMode] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [bio, setBio] = useState("This is my bio. Dm me if you want to talk :)");
+    const [editBio, setEditBio] = useState(bio);
+
     const logoutUser = async() => {
         props.setVisible(false)
         try{
@@ -123,6 +128,22 @@ const ProfileModal = (props) => {
         } catch(e){
           throw e;
         }
+    }
+
+    useEffect(() => {
+        if(editMode){
+            bioInput.current.focus();
+        }
+    }, [editMode])
+
+    const saveBio = () => {
+        setBio(editBio);
+        setEditMode(false);
+    }
+
+    const cancelEditBio = () => {
+        setEditBio(bio);
+        setEditMode(false);
     }
 
     return (
@@ -133,14 +154,7 @@ const ProfileModal = (props) => {
                 <SafeAreaView style={{display: 'flex', flex: 1}}>
                     <View style = {styles.profileView}>
                         <View style = {styles.header}>
-                            {!selector ? 
-                            <TouchableOpacity style ={styles.profileButton} onPress = {() => setSelector(true)}>
-                                <Text style ={{fontSize: 30}}>🐶</Text>
-                            </TouchableOpacity> : 
                             <View style = {styles.characterSelector}>
-                                <TouchableOpacity style = {[styles.emojiBtn, {paddingLeft: 10, borderRightWidth: 0.5, borderColor: "gray"}]} onPress = {() => setSelector(false)}>
-                                    <Text style ={{fontSize: 30}}>🐶</Text>
-                                </TouchableOpacity>
                                 <ScrollView horizontal={true} showsHorizontalScrollIndicator = {false}>
                                     <TouchableOpacity style = {styles.emojiBtn}>
                                         <Text style ={{fontSize: 30}}>🐵</Text>
@@ -154,7 +168,7 @@ const ProfileModal = (props) => {
                                     <TouchableOpacity style = {styles.emojiBtn}>
                                         <Text style ={{fontSize: 30}}>🐺</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style = {styles.emojiBtn}>
+                                    <TouchableOpacity style = {[styles.emojiBtn, {paddingLeft: 10, backgroundColor: "#7367FF", borderRadius: 50}]}>
                                         <Text style ={{fontSize: 30}}>🐯</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style = {styles.emojiBtn}>
@@ -164,14 +178,39 @@ const ProfileModal = (props) => {
                                         <Text style ={{fontSize: 30}}>🐮</Text>
                                     </TouchableOpacity>
                                 </ScrollView> 
-                            </View>}
+                            </View>
+                            <View style = {{justifyContent: "center", alignItems: "center", paddingHorizontal: 5}}>
+                                <Text style = {{fontSize: 17, fontWeight: "500", color: "#3C3C3D"}}>🍁 50</Text>
+                            </View>
                         </View>
                         <View style = {styles.schoolSelector}>
-                            <Text style = {{fontSize: 20}}>🏫 University of Ottawa</Text>
+                            <Text style = {{fontSize: 20}}>🏫 University of British Columbia</Text>
                         </View>
-                        <View style = {styles.bioContainer}>
-                            <Text style = {{fontSize: 15,}}>✏️ This is my bio. DM me if you want to talk :)</Text>
-                        </View>
+                        {!editMode ? 
+                        <TouchableOpacity style = {styles.bioContainer} onPress = {() => setEditMode(true)}>
+                            <Text style = {{fontSize: 15,}}>✏️ {bio}</Text> 
+                        </TouchableOpacity> :
+                        <View>
+                            <View  style = {styles.bioContainer}>
+                                <View style = {{flexDirection: "row", paddingRight: 5,}}>
+                                    <Text style = {{fontSize: 15, paddingRight: 5,}}>✏️</Text>
+                                    <TextInput
+                                        ref={bioInput}
+                                        style={{fontSize: 15, width: "90%"}}
+                                        value = {editBio}
+                                        placeholder = {"This is my bio..."}
+                                        onChangeText={setEditBio}/>
+                                </View>
+                            </View>
+                            <View style = {{flexDirection: "row", marginVertical: 10,}}>
+                                <TouchableOpacity style = {[styles.editBioBtn, {backgroundColor: "lightgray"}]} onPress = {cancelEditBio}>
+                                    <Text style = {styles.editBioBtnText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style = {[styles.editBioBtn, {backgroundColor: "#7367FF"}]} onPress = {saveBio}>
+                                    <Text style = {styles.editBioBtnText}>Edit Bio</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>}
                         <View style = {{flexDirection: "row",borderRadius: 25, backgroundColor: "#f5f5f5"}}>
                             <TouchableOpacity style = {!ghostMode ? [styles.modeButton, styles.ghostModeButton] : styles.modeButton} onPress = {() => setGhostMode(false)}>
                                 <Text style = {!ghostMode ? {fontSize: 15, fontWeight: "bold", color: "white"} : {fontSize: 15}}>😎 Vibe Mode</Text>
